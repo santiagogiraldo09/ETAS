@@ -11,3 +11,4 @@ azure-cognitiveservices-vision-computervision
 msrest
 openai
 pillow
+os
