@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import os
+import subprocess
 
 
 # Inicializar listas para almacenar usuarios y contraseñas
@@ -11,7 +12,7 @@ if 'contrasenas' not in st.session_state:
 
 def ejecucion_flujo_url(url):
     try:
-        os.system(f'start {url}')
+        subprocess.run(['start', url], shell=True)
         return "Consultando ETA´s"
     except Exception as e:
         return f"Ocurrió un error al ejecutar el flujo: {str(e)}"
