@@ -12,7 +12,7 @@ if 'contrasenas' not in st.session_state:
 
 def ejecucion_flujo_url(url):
     try:
-        subprocess.run(['start', url], shell=True)
+        os.system(f'start {url}')
         return "Consultando ETA´s"
     except Exception as e:
         return f"Ocurrió un error al ejecutar el flujo: {str(e)}"
