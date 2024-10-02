@@ -11,10 +11,17 @@ if 'contrasenas' not in st.session_state:
 
 def ejecucion_flujo_url(url):
     try:
-        os.startfile(url)
-        return ("Consultando ETA´s")
+        os.system(f'start {url}')
+        return "Consultando ETA´s"
     except Exception as e:
-        return (f"Ocurrió un error al ejecutar el flujo: {str(e)}")
+        return f"Ocurrió un error al ejecutar el flujo: {str(e)}"
+
+#def ejecucion_flujo_url(url):
+    #try:
+        #os.startfile(url)
+        #return ("Consultando ETA´s")
+    #except Exception as e:
+        #return (f"Ocurrió un error al ejecutar el flujo: {str(e)}")
 
 def register_or_login_view():
     """Vista inicial donde el usuario puede registrarse o entrar con usuario existente."""
