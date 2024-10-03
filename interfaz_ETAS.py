@@ -39,10 +39,9 @@ def register_or_login_view():
     """, unsafe_allow_html=True)
     #st.title("Registro o Login")
     
-    # Inputs para el usuario y la contraseña
-    usuario = st.text_input("Usuario")
-    contrasena = st.text_input("Contraseña", type="password")
-    
+    # Inputs para el usuario y la contraseña con claves únicas
+    usuario = st.text_input("Usuario", key="usuario_input")
+    contrasena = st.text_input("Contraseña", type="password", key="contrasena_input")    
     # Botones para registrarse o entrar
     col1, col2 = st.columns(2)
     with col1:
