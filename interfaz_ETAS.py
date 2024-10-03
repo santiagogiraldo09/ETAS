@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import os
-
+import requests
 
 
 # Inicializar listas para almacenar usuarios y contraseñas
@@ -12,10 +12,24 @@ if 'contrasenas' not in st.session_state:
 
 def ejecucion_flujo_url(url):
     try:
-        os.startfile(url)
-        return ("Consultando ETA´s")
+        headers = {'Content-Type': 'application/json'}
+        data = {
+            # Agrega aquí los datos que necesites enviar al flujo
+        }
+        response = requests.post(url, headers=headers, json=data)
+        if response.status_code == 200 or response.status_code == 202:
+            return "El flujo se ha ejecutado correctamente."
+        else:
+            return f"Error al ejecutar el flujo. Código de estado: {response.status_code}"
     except Exception as e:
-        return (f"Ocurrió un error al ejecutar el flujo: {str(e)}")
+        return f"Ocurrió un error al ejecutar el flujo: {str(e)}"
+
+#def ejecucion_flujo_url(url):
+    #try:
+        #os.startfile(url)
+        #return ("Consultando ETA´s")
+    #except Exception as e:
+        #return (f"Ocurrió un error al ejecutar el flujo: {str(e)}")
 
 def register_or_login_view():
     """Vista inicial donde el usuario puede registrarse o entrar con usuario existente."""
@@ -69,8 +83,9 @@ def main_view():
         # Mostrar una vista previa del archivo
         st.write("Vista previa del archivo:")
         st.dataframe(df.head())
+        url_flujo = 'https://prod-43.westus.logic.azure.com:443/workflows/92297bf73c4b494ea9c4668c7a9569fe/triggers/manual/paths/invoke?api-version=2016-06-01'
         #url_flujo = "ms-powerautomate:/console/flow/run?environmentid=Default-f20cbde7-1c45-44a0-89c5-63a25c557ef8&workflowid=64f3cd77-3e25-4f1f-8118-3ceb41d3b88d&source=Other"
-        url_flujo = "ms-powerautomate:/console/flow/run?environmentid=Default-f20cbde7-1c45-44a0-89c5-63a25c557ef8&workflowid=d936338d-84f3-4891-9909-1e020b3f21b6&source=Other"
+        #url_flujo = "ms-powerautomate:/console/flow/run?environmentid=Default-f20cbde7-1c45-44a0-89c5-63a25c557ef8&workflowid=d936338d-84f3-4891-9909-1e020b3f21b6&source=Other"
         if st.button("Ejecutar"):
             #st.success("Ejecución completada con éxito")
             with st.spinner("Consultando ETA´s"):
@@ -89,5 +104,5 @@ def main():
 if __name__ == "__main__":
     main()
 
-
+#https://prod-43.westus.logic.azure.com:443/workflows/92297bf73c4b494ea9c4668c7a9569fe/triggers/manual/paths/invoke?api-version=2016-06-01
 
