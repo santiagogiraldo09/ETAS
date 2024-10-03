@@ -17,7 +17,7 @@ def ejecucion_flujo_url(url):
         }
         response = requests.post(url, headers=headers, json=data)
         if response.status_code == 200 or response.status_code == 202:
-            return "El flujo se ha ejecutado correctamente."
+            return "Consultando ETAS..."
         else:
             return f"Error al ejecutar el flujo. Código de estado: {response.status_code}"
     except Exception as e:
