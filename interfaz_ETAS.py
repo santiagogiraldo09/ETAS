@@ -82,7 +82,7 @@ def main_view():
         # Mostrar una vista previa del archivo
         st.write("Vista previa del archivo:")
         st.dataframe(df.head())
-        url_flujo = 'https://prod-43.westus.logic.azure.com:443/workflows/92297bf73c4b494ea9c4668c7a9569fe/triggers/manual/paths/invoke?api-version=2016-06-01'
+        url_flujo = 'https://prod-43.westus.logic.azure.com:443/workflows/92297bf73c4b494ea9c4668c7a9569fe/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=aoHBBza4EuOoUsRdxDJFM_0N6Gf-jLR4tWCx3etWLP8'
         #url_flujo = "ms-powerautomate:/console/flow/run?environmentid=Default-f20cbde7-1c45-44a0-89c5-63a25c557ef8&workflowid=64f3cd77-3e25-4f1f-8118-3ceb41d3b88d&source=Other"
         #url_flujo = "ms-powerautomate:/console/flow/run?environmentid=Default-f20cbde7-1c45-44a0-89c5-63a25c557ef8&workflowid=d936338d-84f3-4891-9909-1e020b3f21b6&source=Other"
         if st.button("Ejecutar"):
@@ -104,4 +104,3 @@ if __name__ == "__main__":
     main()
 
 #https://prod-43.westus.logic.azure.com:443/workflows/92297bf73c4b494ea9c4668c7a9569fe/triggers/manual/paths/invoke?api-version=2016-06-01
-
