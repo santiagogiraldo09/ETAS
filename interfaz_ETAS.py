@@ -1,7 +1,43 @@
 import streamlit as st
 import pandas as pd
 import requests
+import psycopg2
+import hashlib
 
+# Conexión a la base de datos
+def get_db_connection():
+    try:
+        conn = psycopg2.connect(
+            dbname="consultaETAS",
+            user="postgres",
+            password="Daniel2030#",
+            host="localhost",
+            port="5432"
+        )
+        return conn
+    except psycopg2.Error as e:
+        st.error(f"Error al conectar a la base de datos: {e}")
+        return None
+
+# Función para hashear la contraseña
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
+# Función para registrar al usuario en la base de datos
+def register_user(username, password):
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        hashed_password = hash_password(password)
+        try:
+            cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, hashed_password))
+            conn.commit()
+            st.success("El registro ha sido exitoso")
+        except psycopg2.Error as e:
+            st.error(f"Error al registrar el usuario: {e}")
+        finally:
+            cursor.close()
+            conn.close()
 
 # Inicializar listas para almacenar usuarios y contraseñas
 #if 'usuarios' not in st.session_state:
@@ -39,9 +75,18 @@ def register_or_login_view():
     #st.title("Registro o Login")
     
     # Inputs para el usuario y la contraseña con claves únicas
-    #usuario = st.text_input("Usuario", key="usuario_input")
-    #contrasena = st.text_input("Contraseña", type="password", key="contrasena_input")    
+    usuario = st.text_input("Usuario", key="usuario_input")
+    contrasena = st.text_input("Contraseña", type="password", key="contrasena_input")    
+    
     # Botones para registrarse o entrar
+    if st.button("Registrarse"):
+        if usuario and contrasena:
+            register_user(usuario, contrasena)
+        else:
+            st.error("Por favor complete todos los campos")
+    
+    
+    
     #col1, col2 = st.columns(2)
     #with col1:
         #if st.button("Registrarse"):
@@ -95,7 +140,7 @@ def main():
         #st.session_state['current_view'] = 'login'
 
     #if st.session_state['current_view'] == 'login':
-        #register_or_login_view()
+        register_or_login_view()
     #elif st.session_state['current_view'] == 'main':
         main_view()
 
