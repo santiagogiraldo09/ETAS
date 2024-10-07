@@ -128,10 +128,14 @@ def main_view():
         with col3:
             st.text_input(f"**Naviera**", key=f"shipping_company_{i}")
             
-    
-    # Botón para agregar otra entrada
-    if st.button("+ Agregar otra entrada"):
-        st.session_state.container_entries += 1
+    col_add, col_delete = st.columns(2)
+    with col_add:
+        # Botón para agregar otra entrada
+        if st.button("Agregar otra entrada"):
+            st.session_state.container_entries += 1
+    with col_delete:
+        if st.button("Eliminar entrada")and st.session_state.container_entries > 1:
+            st.session_state.container_entries -= 1
     # Botón para enviar los datos ingresados
     if st.button("ENVIAR", key="send_button"):
         container_data = []
