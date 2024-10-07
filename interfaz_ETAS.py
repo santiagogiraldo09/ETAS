@@ -45,7 +45,7 @@ def login_user(username, password):
     if conn:
         cursor = conn.cursor()
         hashed_password = hash_password(password)
-        cursor.execute("SELECT * FROM users WHERE username = %s AND password = %s", (username, hashed_password))
+        cursor.execute("SELECT * FROM usuario WHERE username = %s AND password = %s", (username, hashed_password))
         result = cursor.fetchone()
         cursor.close()
         conn.close()
