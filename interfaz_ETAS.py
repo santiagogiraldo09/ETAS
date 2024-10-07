@@ -30,7 +30,7 @@ def register_user(username, password):
         cursor = conn.cursor()
         hashed_password = hash_password(password)
         try:
-            cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, hashed_password))
+            cursor.execute("INSERT INTO usuario (username, password) VALUES (%s, %s)", (username, hashed_password))
             conn.commit()
             st.success("El registro ha sido exitoso")
         except psycopg2.Error as e:
