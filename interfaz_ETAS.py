@@ -53,6 +53,27 @@ def login_user(username, password):
             return True
     return False
 
+# Función para agregar los datos de contenedores a la tabla "consulta"
+def add_container_data(user_id, container_data):
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        insert_query = """
+        INSERT INTO consulta (usuario_id, num_contenedor, doc_transporte, naviera)
+        VALUES (%s, %s, %s, %s)
+        """
+        try:
+            for data in container_data:
+                cursor.execute(insert_query, (user_id, data["Número de contenedor"], data["Documento de transporte"], data["Naviera"]))
+            conn.commit()
+            st.success("Datos enviados correctamente a la base de datos.")
+        except psycopg2.Error as e:
+            st.error(f"Error al guardar los datos en la base de datos: {e}")
+        finally:
+            cursor.close()
+            conn.close()
+
+
 # Vista de registro e inicio de sesión
 def register_or_login_view():
     st.markdown("""
@@ -111,6 +132,20 @@ def main_view():
     # Botón para agregar otra entrada
     if st.button("+ Agregar otra entrada"):
         st.session_state.container_entries += 1
+    # Botón para enviar los datos ingresados
+    if st.button("ENVIAR"):
+        container_data = []
+        for i in range(st.session_state.container_entries):
+            container_data.append({
+                "Número de contenedor": st.session_state[f"container_number_{i}"],
+                "Documento de transporte": st.session_state.get(f"transport_document_{i}", ""),
+                "Naviera": st.session_state[f"shipping_company_{i}"]
+            })
+        
+        # Obtener el user_id del estado de sesión y enviar los datos a la base de datos
+        user_id = st.session_state.get('user_id')
+        if user_id:
+            add_container_data(user_id, container_data)
     #uploaded_file = st.file_uploader("Excel con ETAs a validar", type=['xlsx'])
     
     #if uploaded_file is not None:
