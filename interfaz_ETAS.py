@@ -136,8 +136,8 @@ def main_view():
             st.write(resultado)
 
 def main():
-    #if 'current_view' not in st.session_state:
-        #st.session_state['current_view'] = 'login'
+    if 'current_view' not in st.session_state:
+        st.session_state['current_view'] = 'login'
 
     #if st.session_state['current_view'] == 'login':
         register_or_login_view()
