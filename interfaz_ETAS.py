@@ -101,11 +101,11 @@ def main_view():
         # Crear tres columnas para alinear los campos horizontalmente
         col1, col2, col3 = st.columns(3)
         with col1:
-            st.text_input(f"Número de contenedor {i + 1}", key=f"container_number_{i}")
+            st.text_input(f"**Número de contenedor**", key=f"container_number_{i}")
         with col2:
-            st.text_input(f"Documento de transporte (opcional) {i + 1}", key=f"transport_document_{i}")
+            st.text_input(f"**Documento de transporte (opcional)**", key=f"transport_document_{i}")
         with col3:
-            st.text_input(f"Naviera {i + 1}", key=f"shipping_company_{i}")
+            st.text_input(f"**Naviera**", key=f"shipping_company_{i}")
             
     
     # Botón para agregar otra entrada
