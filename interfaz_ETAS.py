@@ -50,8 +50,8 @@ def login_user(username, password):
         cursor.close()
         conn.close()
         if result:
-            return True
-    return False
+            return result[0] #retorna el id del usuario
+    return None
 
 # Función para agregar los datos de contenedores a la tabla "consulta"
 def add_container_data(user_id, container_data):
@@ -151,6 +151,8 @@ def main_view():
         user_id = st.session_state.get('user_id')
         if user_id:
             add_container_data(user_id, container_data)
+        else:
+            st.error("No se ha encontrado el id del usuario. Por favor, inicie sesión nuevamente.")
     #uploaded_file = st.file_uploader("Excel con ETAs a validar", type=['xlsx'])
     
     #if uploaded_file is not None:
