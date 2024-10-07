@@ -148,7 +148,7 @@ def main_view():
             })
         
         # Obtener el user_id del estado de sesión y enviar los datos a la base de datos
-        user_id = st.session_state.get('usuario_id')
+        user_id = st.session_state.get('user_id')
         if user_id:
             add_container_data(user_id, container_data)
     #uploaded_file = st.file_uploader("Excel con ETAs a validar", type=['xlsx'])
