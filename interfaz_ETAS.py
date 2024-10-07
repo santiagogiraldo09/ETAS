@@ -133,9 +133,10 @@ def main_view():
         # Botón para agregar otra entrada
         if st.button("Agregar otra entrada"):
             st.session_state.container_entries += 1
-    with col_delete:
-        if st.button("Eliminar entrada")and st.session_state.container_entries > 1:
-            st.session_state.container_entries -= 1
+    if st.session_state.container_entries > 1:
+        with col_delete:
+            if st.button("Eliminar entrada")and st.session_state.container_entries > 1:
+                st.session_state.container_entries -= 1
     # Botón para enviar los datos ingresados
     if st.button("ENVIAR", key="send_button"):
         container_data = []
