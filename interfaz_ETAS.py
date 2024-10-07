@@ -148,11 +148,10 @@ def main():
     if 'current_view' not in st.session_state:
         st.session_state['current_view'] = 'login'
 
-    #if st.session_state['current_view'] == 'login':
+    if st.session_state['current_view'] == 'login':
         register_or_login_view()
-    #elif st.session_state['current_view'] == 'main':
+    elif st.session_state['current_view'] == 'main':
         main_view()
-
 if __name__ == "__main__":
     main()
 
