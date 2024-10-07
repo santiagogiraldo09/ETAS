@@ -133,33 +133,31 @@ def main_view():
     if st.button("+ Agregar otra entrada"):
         st.session_state.container_entries += 1
     # Botón para enviar los datos ingresados
-    col1, col2, col3 = st.columns([1, 1, 1.5])
-    with col3:
-        if st.button("ENVIAR", key="send_button"):
-            container_data = []
-            for i in range(st.session_state.container_entries):
-                container_data.append({
-                    "Número de contenedor": st.session_state[f"container_number_{i}"],
-                    "Documento de transporte": st.session_state.get(f"transport_document_{i}", ""),
-                    "Naviera": st.session_state[f"shipping_company_{i}"]
-                })
-            
-            # Obtener el user_id del estado de sesión y enviar los datos a la base de datos
-            user_id = st.session_state.get('user_id')
-            if user_id:
-                add_container_data(user_id, container_data)
-        #uploaded_file = st.file_uploader("Excel con ETAs a validar", type=['xlsx'])
+    if st.button("ENVIAR", key="send_button"):
+        container_data = []
+        for i in range(st.session_state.container_entries):
+            container_data.append({
+                "Número de contenedor": st.session_state[f"container_number_{i}"],
+                "Documento de transporte": st.session_state.get(f"transport_document_{i}", ""),
+                "Naviera": st.session_state[f"shipping_company_{i}"]
+            })
         
-        #if uploaded_file is not None:
-            #df = pd.read_excel(uploaded_file)
-            #st.write("Vista previa del archivo:")
-            #st.dataframe(df.head())
-            
-            #url_flujo = 'https://prod-43.westus.logic.azure.com:443/workflows/92297bf73c4b494ea9c4668c7a9569fe/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=aoHBBza4EuOoUsRdxDJFM_0N6Gf-jLR4tWCx3etWLP8'
-            #if st.button("Ejecutar"):
-                #with st.spinner("Consultando ETAs..."):
-                    #resultado = ejecucion_flujo_url(url_flujo)
-                #st.write(resultado)
+        # Obtener el user_id del estado de sesión y enviar los datos a la base de datos
+        user_id = st.session_state.get('user_id')
+        if user_id:
+            add_container_data(user_id, container_data)
+    #uploaded_file = st.file_uploader("Excel con ETAs a validar", type=['xlsx'])
+    
+    #if uploaded_file is not None:
+        #df = pd.read_excel(uploaded_file)
+        #st.write("Vista previa del archivo:")
+        #st.dataframe(df.head())
+        
+        #url_flujo = 'https://prod-43.westus.logic.azure.com:443/workflows/92297bf73c4b494ea9c4668c7a9569fe/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=aoHBBza4EuOoUsRdxDJFM_0N6Gf-jLR4tWCx3etWLP8'
+        #if st.button("Ejecutar"):
+            #with st.spinner("Consultando ETAs..."):
+                #resultado = ejecucion_flujo_url(url_flujo)
+            #st.write(resultado)
 
 # Función para ejecutar un flujo a través de una URL
 def ejecucion_flujo_url(url):
