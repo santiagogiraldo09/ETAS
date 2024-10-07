@@ -38,6 +38,20 @@ def register_user(username, password):
         finally:
             cursor.close()
             conn.close()
+            
+# Función para verificar el login del usuario
+def login_user(username, password):
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        hashed_password = hash_password(password)
+        cursor.execute("SELECT * FROM users WHERE username = %s AND password = %s", (username, hashed_password))
+        result = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        if result:
+            return True
+    return False
 
 # Inicializar listas para almacenar usuarios y contraseñas
 #if 'usuarios' not in st.session_state:
@@ -72,45 +86,40 @@ def register_or_login_view():
     <h1 style='text-align: center;'>Alerta de ETAs</h1>
     <h3 style='text-align: left;'>Registro o Login</h3>
     """, unsafe_allow_html=True)
-    #st.title("Registro o Login")
+    st.title("Registro o Login")
     
     # Inputs para el usuario y la contraseña con claves únicas
     usuario = st.text_input("Usuario", key="usuario_input")
     contrasena = st.text_input("Contraseña", type="password", key="contrasena_input")    
     
-    # Botones para registrarse o entrar
-    if st.button("Registrarse"):
-        if usuario and contrasena:
-            register_user(usuario, contrasena)
-        else:
-            st.error("Por favor complete todos los campos")
-    
-    
-    
-    #col1, col2 = st.columns(2)
-    #with col1:
-        #if st.button("Registrarse"):
-            #if usuario and contrasena:
+    # Botones para registrarse o entrar    
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("Registrarse"):
+            if usuario and contrasena:
                 # Almacenar el nuevo usuario y contraseña
+                register_user(usuario, contrasena)
                 #st.session_state['usuarios'].append(usuario)
                 #st.session_state['contrasenas'].append(contrasena)
                 #st.success("El registro ha sido exitoso")
-            #else:
-                #st.error("Por favor complete todos los campos")
-    #with col2:
-        #if st.button("Entrar"):
-            #if usuario and contrasena:
+            else:
+                st.error("Por favor complete todos los campos")
+    with col2:
+        if st.button("Entrar"):
+            if usuario and contrasena:
                 # Verificar si el usuario y la contraseña existen en las listas
-                #if usuario in st.session_state['usuarios']:
+                if login_user(usuario, contrasena):
+                    st.session_state['current_view'] = 'main'
+                    st.success("Inicio de sesión exitoso")
                     #index = st.session_state['usuarios'].index(usuario)
                     #if st.session_state['contrasenas'][index] == contrasena:
                         #st.session_state['current_view'] = 'main'
                     #else:
                         #st.error("Contraseña incorrecta")
-                #else:
-                    #st.error("Usuario no registrado")
-            #else:
-                #st.error("Por favor complete todos los campos")
+                else:
+                    st.error("Usuario o contraseña incorrectos")
+            else:
+                st.error("Por favor complete todos los campos")
 
 def main_view():
     """Vista principal después de entrar, para correo y carga de Excel."""
