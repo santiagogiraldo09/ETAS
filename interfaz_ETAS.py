@@ -59,12 +59,12 @@ def add_container_data(user_id, container_data):
     if conn:
         cursor = conn.cursor()
         insert_query = """
-        INSERT INTO consulta (usuario_id, num_contenedor, doc_transporte, naviera)
+        INSERT INTO consulta (num_contenedor, doc_transporte, naviera, usuario_id)
         VALUES (%s, %s, %s, %s)
         """
         try:
             for data in container_data:
-                cursor.execute(insert_query, (user_id, data["Número de contenedor"], data["Documento de transporte"], data["Naviera"]))
+                cursor.execute(insert_query, (data["Número de contenedor"], data["Documento de transporte"], data["Naviera"], user_id))
             conn.commit()
             st.success("Datos enviados correctamente a la base de datos.")
         except psycopg2.Error as e:
@@ -148,7 +148,7 @@ def main_view():
             })
         
         # Obtener el user_id del estado de sesión y enviar los datos a la base de datos
-        user_id = st.session_state.get('user_id')
+        user_id = st.session_state.get('id')
         if user_id:
             add_container_data(user_id, container_data)
         else:
