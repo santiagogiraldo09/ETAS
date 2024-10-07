@@ -66,9 +66,9 @@ def add_container_data(user_id, container_data):
             for data in container_data:
                 cursor.execute(insert_query, (data["num_contenedor"], data["doc_transporte"], data["naviera"], user_id))
             conn.commit()
-            st.success("Datos enviados correctamente a la base de datos.")
+            st.success("Información cargada, pronto recibirá un email dando inicio al proceso de consulta de ETAS.")
         except psycopg2.Error as e:
-            st.error(f"Error al guardar los datos en la base de datos: {e}")
+            st.error(f"Error al cargar los datos: {e}")
         finally:
             cursor.close()
             conn.close()
