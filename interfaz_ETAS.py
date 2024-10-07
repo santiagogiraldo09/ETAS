@@ -11,7 +11,7 @@ def get_db_connection():
             dbname="consultaETAS",
             user="postgres",
             password="Daniel2030#",
-            host="localhost",
+            host="127.0.0.1",
             port="5432"
         )
         return conn
