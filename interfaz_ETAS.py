@@ -64,7 +64,7 @@ def add_container_data(user_id, container_data):
         """
         try:
             for data in container_data:
-                cursor.execute(insert_query, (data["Número de contenedor"], data["Documento de transporte"], data["Naviera"], user_id))
+                cursor.execute(insert_query, (data["num_contenedor"], data["doc_transporte"], data["naviera"], user_id))
             conn.commit()
             st.success("Datos enviados correctamente a la base de datos.")
         except psycopg2.Error as e:
@@ -95,8 +95,10 @@ def register_or_login_view():
     with col2:
         if st.button("Entrar"):
             if usuario and contrasena:
-                if login_user(usuario, contrasena):
+                user_id = login_user(usuario, contrasena)
+                if user_id:
                     st.session_state['current_view'] = 'main'
+                    st.session_state['id'] = user_id
                     st.success("Inicio de sesión exitoso")
                 else:
                     st.error("Usuario o contraseña incorrectos")
@@ -142,9 +144,9 @@ def main_view():
         container_data = []
         for i in range(st.session_state.container_entries):
             container_data.append({
-                "Número de contenedor": st.session_state[f"container_number_{i}"],
-                "Documento de transporte": st.session_state.get(f"transport_document_{i}", ""),
-                "Naviera": st.session_state[f"shipping_company_{i}"]
+                "num_contenedor": st.session_state[f"container_number_{i}"],
+                "doc_transporte": st.session_state.get(f"transport_document_{i}", ""),
+                "naviera": st.session_state[f"shipping_company_{i}"]
             })
         
         # Obtener el user_id del estado de sesión y enviar los datos a la base de datos
