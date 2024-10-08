@@ -122,15 +122,17 @@ def main_view():
 
     st.title("Alerta de ETAs")
     
-    registered_email = st.session_state.get('email')
+    registered_email = st.session_state.get('email', '')
     
-    correo = st.text_input("Correo de notificación", value=st.session_state.get('email."'))
+    #correo = st.text_input("Correo de notificación", value=st.session_state.get('email."'))
     
+    # Establecer el correo electrónico registrado como valor predeterminado en el campo de entrada
+    correo = st.text_input("Correo de notificación", value=registered_email)
     # Mostrar el correo registrado o "No registrado"
-    if registered_email:
-        st.write(f"Correo registrado: {registered_email}")
-    else:
-        st.write("Correo registrado: no registra")
+    #if registered_email:
+        #st.write(f"Correo registrado: {registered_email}")
+    #else:
+        #st.write("Correo registrado: no registra")
     
     # Inicializar el contador de entradas si no existe
     if 'container_entries' not in st.session_state:
