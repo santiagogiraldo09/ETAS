@@ -51,7 +51,7 @@ def login_user(username, password):
         conn.close()
         if result:
             return result[0], result[1] #retorna el id del usuario y el correo
-    return None
+    return None, None
 
 # Función para agregar los datos de contenedores a la tabla "consulta"
 def add_container_data(user_id, container_data, correo):
@@ -122,7 +122,15 @@ def main_view():
 
     st.title("Alerta de ETAs")
     
+    registered_email = st.session_state.get('email')
+    
     correo = st.text_input("Correo de notificación", value=st.session_state.get('email."'))
+    
+    # Mostrar el correo registrado o "No registrado"
+    if registered_email:
+        st.write(f"Correo registrado: {registered_email}")
+    else:
+        st.write("Correo registrado: no registra")
     
     # Inicializar el contador de entradas si no existe
     if 'container_entries' not in st.session_state:
