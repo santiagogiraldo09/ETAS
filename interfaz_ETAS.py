@@ -45,16 +45,16 @@ def login_user(username, password):
     if conn:
         cursor = conn.cursor()
         hashed_password = hash_password(password)
-        cursor.execute("SELECT * FROM usuario WHERE username = %s AND password = %s", (username, hashed_password))
+        cursor.execute("SELECT id, email FROM usuario WHERE username = %s AND password = %s", (username, hashed_password))
         result = cursor.fetchone()
         cursor.close()
         conn.close()
         if result:
-            return result[0] #retorna el id del usuario
+            return result[0], result[1] #retorna el id del usuario y el correo
     return None
 
 # Función para agregar los datos de contenedores a la tabla "consulta"
-def add_container_data(user_id, container_data):
+def add_container_data(user_id, container_data, correo):
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
@@ -62,7 +62,17 @@ def add_container_data(user_id, container_data):
         INSERT INTO consulta (num_contenedor, doc_transporte, naviera, usuario_id)
         VALUES (%s, %s, %s, %s)
         """
+        
+        #Consulta para actualizar el correo en la tabla 'usuario'
+        update_email ="""
+        UPDATE usuario SET email = %s WHERE id = %s
+        """
         try:
+            # Si el correo es nuevo o cambió, actualizar el correo en la tabla usuario
+            if st.session_state.get('email') != correo:
+                cursor.execute(update_email, (correo, user_id))
+                st.session_state['email'] = correo  # Actualiza el estado con el nuevo correo
+            
             for data in container_data:
                 cursor.execute(insert_query, (data["num_contenedor"], data["doc_transporte"], data["naviera"], user_id))
             conn.commit()
@@ -95,10 +105,11 @@ def register_or_login_view():
     with col2:
         if st.button("Entrar"):
             if usuario and contrasena:
-                user_id = login_user(usuario, contrasena)
+                user_id, email = login_user(usuario, contrasena)
                 if user_id:
                     st.session_state['current_view'] = 'main'
                     st.session_state['id'] = user_id
+                    st.session_state['email'] = email
                     st.success("Inicio de sesión exitoso")
                 else:
                     st.error("Usuario o contraseña incorrectos")
@@ -111,7 +122,7 @@ def main_view():
 
     st.title("Alerta de ETAs")
     
-    correo = st.text_input("Correo de notificación")
+    correo = st.text_input("Correo de notificación", value=st.session_state.get('email."'))
     
     # Inicializar el contador de entradas si no existe
     if 'container_entries' not in st.session_state:
@@ -152,7 +163,7 @@ def main_view():
         # Obtener el user_id del estado de sesión y enviar los datos a la base de datos
         user_id = st.session_state.get('id')
         if user_id:
-            add_container_data(user_id, container_data)
+            add_container_data(user_id, container_data, correo)
         else:
             st.error("No se ha encontrado el id del usuario. Por favor, inicie sesión nuevamente.")
     #uploaded_file = st.file_uploader("Excel con ETAs a validar", type=['xlsx'])
