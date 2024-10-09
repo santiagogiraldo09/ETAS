@@ -128,11 +128,6 @@ def main_view():
     
     # Establecer el correo electrónico registrado como valor predeterminado en el campo de entrada
     correo = st.text_input("Correo de notificación", value=registered_email)
-    # Mostrar el correo registrado o "No registrado"
-    #if registered_email:
-        #st.write(f"Correo registrado: {registered_email}")
-    #else:
-        #st.write("Correo registrado: no registra")
     
     # Inicializar el contador de entradas si no existe
     if 'container_entries' not in st.session_state:
@@ -149,7 +144,7 @@ def main_view():
         with col2:
             st.text_input(f"**Documento de transporte (opcional)**", key=f"transport_document_{i}")
         with col3:
-            st.text_input(f"**Naviera**", key=f"shipping_company_{i}")
+            st.text_input("**Naviera**",["Evergreen","Maersk","ONE","Hapa-Lloing"], key=f"shipping_company_{i}")
             
     col_add, col_delete = st.columns(2)
     with col_add:
@@ -176,18 +171,6 @@ def main_view():
             add_container_data(user_id, container_data, correo)
         else:
             st.error("No se ha encontrado el id del usuario. Por favor, inicie sesión nuevamente.")
-    #uploaded_file = st.file_uploader("Excel con ETAs a validar", type=['xlsx'])
-    
-    #if uploaded_file is not None:
-        #df = pd.read_excel(uploaded_file)
-        #st.write("Vista previa del archivo:")
-        #st.dataframe(df.head())
-        
-        #url_flujo = 'https://prod-43.westus.logic.azure.com:443/workflows/92297bf73c4b494ea9c4668c7a9569fe/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=aoHBBza4EuOoUsRdxDJFM_0N6Gf-jLR4tWCx3etWLP8'
-        #if st.button("Ejecutar"):
-            #with st.spinner("Consultando ETAs..."):
-                #resultado = ejecucion_flujo_url(url_flujo)
-            #st.write(resultado)
 
 # Función para ejecutar un flujo a través de una URL
 def ejecucion_flujo_url(url):
