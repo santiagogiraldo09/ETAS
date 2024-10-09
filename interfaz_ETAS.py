@@ -159,7 +159,7 @@ def main_view():
         with col2:
             st.text_input(f"**Documento de transporte (opcional)**", key=f"transport_document_{i}")
         with col3:
-            st.text_input("**Naviera**",["Evergreen","Maersk","ONE","Hapa-Lloing"], key=f"shipping_company_{i}")
+            st.selectbox("**Naviera**",["Evergreen","Maersk","ONE","Hapa-Lloing"], key=f"shipping_company_{i}")
             
     col_add, col_delete = st.columns(2)
     with col_add:
