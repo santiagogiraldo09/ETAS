@@ -161,7 +161,7 @@ def main_view():
         with col1:
             st.text_input(f"**Número de contenedor**", key=f"container_number_{i}")
         with col2:
-            st.text_input(f"**Documento de transporte (opcional)**", key=f"transport_document_{i}")
+            st.text_input(f"**Documento de transporte**", key=f"transport_document_{i}")
         with col3:
             st.selectbox("**Naviera**",["Evergreen","CMA-CGM","Maersk","ONE","Hapag-Lloyd"], key=f"shipping_company_{i}")
             
@@ -176,22 +176,48 @@ def main_view():
                 st.session_state.container_entries -= 1
     # Botón para enviar los datos ingresados
     if st.button("Enviar", key="send_button"):
+        #Inicializar bandera para verificar que todos los campos estén completos
+        all_fields = True
+        missing_fields_messages = []
+        
+        # Verificar si el correo está completo
+        if not correo.strip():
+            all_fields = False
+            missing_fields_messages.append("El campo 'Correo de notificación' es obligatorio.")
+        
         container_data = []
         for i in range(st.session_state.container_entries):
+            num_contenedor = st.session_state[f"container_number_{i}"].strip()
+            doc_transporte = st.session_state.get(f"transport_document_{i}", "").strip()
+            naviera = st.session_state[f"shipping_company_{i}"]
+            
+            # Validar campos
+            if not num_contenedor:
+                all_fields = False
+                missing_fields_messages.append(f"El campo 'Número de contenedor' en la entrada {i+1} es obligatorio.")
+            if not doc_transporte:
+                all_fields = False
+                missing_fields_messages.append(f"El campo 'Documento de transporte' en la entrada {i+1} es obligatorio.")
+            if not naviera:
+                all_fields = False
+                missing_fields_messages.append(f"El campo 'Naviera' en la entrada {i+1} es obligatorio.")
+            
             container_data.append({
-                "num_contenedor": st.session_state[f"container_number_{i}"],
-                "doc_transporte": st.session_state.get(f"transport_document_{i}", ""),
-                "naviera": st.session_state[f"shipping_company_{i}"]
+                "num_contenedor": num_contenedor,
+                "doc_transporte": doc_transporte,
+                "naviera": naviera
             })
-        
-        # Obtener el user_id del estado de sesión y enviar los datos a la base de datos
-        user_id = st.session_state.get('id')
-        if user_id:
-            add_container_data(user_id, container_data, correo)
-            # Enviar el correo y el primer número de contenedor a Power Automate
-            send_to_power_automate(correo, container_data[0]["num_contenedor"])
+        if all_fields:
+            # Obtener el user_id del estado de sesión y enviar los datos a la base de datos
+            user_id = st.session_state.get('id')
+            if user_id:
+                add_container_data(user_id, container_data, correo)
+                # Enviar el correo y el primer número de contenedor a Power Automate
+                send_to_power_automate(correo, container_data[0]["num_contenedor"])
+            else:
+                st.error("No se ha encontrado el id del usuario. Por favor, inicie sesión nuevamente.")
         else:
-            st.error("No se ha encontrado el id del usuario. Por favor, inicie sesión nuevamente.")
+            st.error ("Hay campos sin completas")
 
 # Función para ejecutar un flujo a través de una URL
 def ejecucion_flujo_url(url):
