@@ -4,6 +4,10 @@ import requests
 import psycopg2
 import hashlib
 
+# Limpiar la caché al inicio
+st.cache_data.clear()
+st.cache_resource.clear()
+
 # Conexión a la base de datos
 def get_db_connection():
     try:
