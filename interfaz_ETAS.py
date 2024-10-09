@@ -175,7 +175,7 @@ def main_view():
             if st.button("Eliminar entrada")and st.session_state.container_entries > 1:
                 st.session_state.container_entries -= 1
     # Botón para enviar los datos ingresados
-    if st.button("ENVIAR", key="send_button"):
+    if st.button("Enviar", key="send_button"):
         container_data = []
         for i in range(st.session_state.container_entries):
             container_data.append({
