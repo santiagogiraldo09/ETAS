@@ -126,9 +126,13 @@ def send_to_power_automate(correo, num_contenedor):
     }
     response = requests.post(url_flujo, headers=headers, json=data)
     if response.status_code in (200, 202):
-        st.success("Datos enviados a Power Automate correctamente.")
+        #st.success("Datos enviados a Power Automate correctamente.")
+        print("Datos enviados a Power Automate correctamente.")
+
     else:
-        st.error(f"Error al enviar los datos a Power Automate: {response.status_code}")
+        #st.error(f"Error al enviar los datos a Power Automate: {response.status_code}")
+        print(f"Error al enviar los datos a Power Automate: {response.status_code}")
+
 
 
 # Vista principal de la aplicación después de iniciar sesión
@@ -159,7 +163,7 @@ def main_view():
         with col2:
             st.text_input(f"**Documento de transporte (opcional)**", key=f"transport_document_{i}")
         with col3:
-            st.selectbox("**Naviera**",["Evergreen","Maersk","ONE","Hapa-Lloing"], key=f"shipping_company_{i}")
+            st.selectbox("**Naviera**",["Evergreen","CMA-CGM","Maersk","ONE","Hapag-Lloyd"], key=f"shipping_company_{i}")
             
     col_add, col_delete = st.columns(2)
     with col_add:
