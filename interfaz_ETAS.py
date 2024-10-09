@@ -116,9 +116,24 @@ def register_or_login_view():
             else:
                 st.error("Por favor complete todos los campos")
 
+#Enviar datos al flujo de Power Automate Nube
+def send_to_power_automate(correo, num_contenedor):
+    url_flujo = 'https://prod-43.westus.logic.azure.com:443/workflows/92297bf73c4b494ea9c4668c7a9569fe/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=aoHBBza4EuOoUsRdxDJFM_0N6Gf-jLR4tWCx3etWLP8'
+    headers = {'Content-Type': 'application/json'}
+    data = {
+        "correo": correo,
+        "num_contenedor": num_contenedor
+    }
+    response = requests.post(url_flujo, headers=headers, json=data)
+    if response.status_code in (200, 202):
+        st.success("Datos enviados a Power Automate correctamente.")
+    else:
+        st.error(f"Error al enviar los datos a Power Automate: {response.status_code}")
+
+
 # Vista principal de la aplicación después de iniciar sesión
 def main_view():
-    url_flujo = 'https://prod-43.westus.logic.azure.com:443/workflows/92297bf73c4b494ea9c4668c7a9569fe/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=aoHBBza4EuOoUsRdxDJFM_0N6Gf-jLR4tWCx3etWLP8'
+    #url_flujo = 'https://prod-43.westus.logic.azure.com:443/workflows/92297bf73c4b494ea9c4668c7a9569fe/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=aoHBBza4EuOoUsRdxDJFM_0N6Gf-jLR4tWCx3etWLP8'
 
     st.title("Alerta de ETAs")
     
@@ -169,6 +184,8 @@ def main_view():
         user_id = st.session_state.get('id')
         if user_id:
             add_container_data(user_id, container_data, correo)
+            # Enviar el correo y el primer número de contenedor a Power Automate
+            send_to_power_automate(correo, container_data[0]["num_contenedor"])
         else:
             st.error("No se ha encontrado el id del usuario. Por favor, inicie sesión nuevamente.")
 
