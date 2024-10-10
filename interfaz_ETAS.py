@@ -5,8 +5,20 @@ import psycopg2
 import hashlib
 
 # Limpiar la caché al inicio
-st.cache_data.clear()
-st.cache_resource.clear()
+#st.cache_data.clear()
+#st.cache_resource.clear()
+
+# Inicializar la lista de entradas
+entries = [{"num_contenedor": "", "doc_transporte": "", "naviera": ""}]
+
+# Función para agregar una nueva entrada
+def add_entry():
+    entries.append({"num_contenedor": "", "doc_transporte": "", "naviera": ""})
+
+# Función para eliminar la última entrada
+def remove_entry():
+    if len(entries) > 1:
+        entries.pop()
 
 # Conexión a la base de datos
 def get_db_connection():
@@ -175,11 +187,13 @@ def main_view():
     with col_add:
         # Botón para agregar otra entrada
         if st.button("Agregar otra entrada"):
-            st.session_state.container_entries += 1
-    if st.session_state.container_entries > 1:
-        with col_delete:
-            if st.button("Eliminar entrada")and st.session_state.container_entries > 1:
-                st.session_state.container_entries -= 1
+            add_entry()
+            #st.session_state.container_entries += 1
+    #if st.session_state.container_entries > 1:
+    with col_delete:
+        if st.button("Eliminar entrada")and st.session_state.container_entries > 1:
+            remove_entry()
+            #st.session_state.container_entries -= 1
     # Botón para enviar los datos ingresados
     if st.button("Enviar", key="send_button"):
         #Inicializar bandera para verificar que todos los campos estén completos
