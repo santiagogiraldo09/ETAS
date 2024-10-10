@@ -166,9 +166,21 @@ def main_view():
     correo = st.text_input("Correo de notificación", value=registered_email)
     
     # Inicializar el contador de entradas si no existe
-    if 'container_entries' not in st.session_state:
-        st.session_state.container_entries = 1
-
+    #if 'container_entries' not in st.session_state:
+        #st.session_state.container_entries = 1
+        
+    col_add, col_delete = st.columns(2)
+    with col_add:
+        # Botón para agregar otra entrada
+        if st.button("Agregar otra entrada"):
+            add_entry()
+            #st.session_state.container_entries += 1
+    #if st.session_state.container_entries > 1:
+    with col_delete:
+        if len(entries) > 1 and st.button("Eliminar entrada"):
+            remove_entry()    
+            #st.session_state.container_entries -= 1
+    
     # Crear un formulario dinámico
     for i in range(st.session_state.container_entries):
         st.subheader(f"Entrada {i + 1}")
@@ -183,15 +195,7 @@ def main_view():
             st.selectbox("**Naviera**",["Evergreen","CMA-CGM","Maersk","ONE","Hapag-Lloyd", "Otra"], key=f"shipping_company_{i}")
     
         
-    col_add, col_delete = st.columns(2)
-    with col_add:
-        # Botón para agregar otra entrada
-        if st.button("Agregar otra entrada"):
-            st.session_state.container_entries += 1
-    if st.session_state.container_entries > 1:
-        with col_delete:
-            if st.button("Eliminar entrada")and st.session_state.container_entries > 1:
-                st.session_state.container_entries -= 1
+   
     # Botón para enviar los datos ingresados
     if st.button("Enviar", key="send_button"):
         #Inicializar bandera para verificar que todos los campos estén completos
