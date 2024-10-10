@@ -223,7 +223,7 @@ def main_view():
             else:
                 st.error("No se ha encontrado el id del usuario. Por favor, inicie sesión nuevamente.")
         else:
-            st.error ("Hay campos sin completas")
+            st.error ("Hay campos sin completar")
 
 # Función para ejecutar un flujo a través de una URL
 def ejecucion_flujo_url(url):
