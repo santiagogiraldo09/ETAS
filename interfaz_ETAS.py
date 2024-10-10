@@ -96,7 +96,7 @@ def register_or_login_view():
     """, unsafe_allow_html=True)
     
     usuario = st.text_input("Usuario", key="usuario_input")
-    empresa = st.text_input("Organización a la que pertenece:", key="empresa_input")
+    empresa = st.text_input("Organización a la que pertenece: **(solo necesario en el registro)**", key="empresa_input")
     contrasena = st.text_input("Contraseña", type="password", key="contrasena_input")
     
     col1, col2 = st.columns(2)
