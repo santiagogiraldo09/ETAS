@@ -23,6 +23,18 @@ def get_db_connection():
         st.error(f"Error al conectar a la base de datos: {e}")
         return None
 
+# Inicializar lista de entradas
+entries = [{"num_contenedor": "", "doc_transporte": "", "naviera": ""}]
+
+# Función para agregar una nueva entrada
+def add_entry():
+    entries.append({"num_contenedor": "", "doc_transporte": "", "naviera": ""})
+
+# Función para eliminar la última entrada
+def remove_entry():
+    if len(entries) > 1:
+        entries.pop()
+
 # Función para hashear la contraseña
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
