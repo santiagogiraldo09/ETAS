@@ -167,8 +167,10 @@ def main_view():
         with col2:
             st.text_input(f"**Documento de transporte**", key=f"transport_document_{i}")
         with col3:
-            st.selectbox("**Naviera**",["Evergreen","CMA-CGM","Maersk","ONE","Hapag-Lloyd"], key=f"shipping_company_{i}")
-            
+            st.selectbox("**Naviera**",["Evergreen","CMA-CGM","Maersk","ONE","Hapag-Lloyd", "Otra"], key=f"shipping_company_{i}")
+    if  f"shipping_company_{i}" == 'Otra':
+        st.text_input(f"**Número de contenedor**", key=f"Other_shipping_{i}")
+        
     col_add, col_delete = st.columns(2)
     with col_add:
         # Botón para agregar otra entrada
