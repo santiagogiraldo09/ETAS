@@ -167,10 +167,8 @@ def main_view():
         with col2:
             st.text_input(f"**Documento de transporte**", key=f"transport_document_{i}")
         with col3:
-            naviera = st.selectbox("**Naviera**",["Evergreen","CMA-CGM","Maersk","ONE","Hapag-Lloyd", "Otra"], key=f"shipping_company_{i}")
-    # Mostrar un campo de texto adicional si la opción seleccionada es "Otra"
-        if naviera == "Otra":
-            st.text_input("¿Cuál otra?", key=f"other_shipping_company_{i}")
+            st.selectbox("**Naviera**",["Evergreen","CMA-CGM","Maersk","ONE","Hapag-Lloyd", "Otra"], key=f"shipping_company_{i}")
+    
         
     col_add, col_delete = st.columns(2)
     with col_add:
