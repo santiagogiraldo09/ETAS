@@ -28,13 +28,13 @@ def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
 # Función para registrar al usuario en la base de datos
-def register_user(username, password):
+def register_user(username, password, company):
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
         hashed_password = hash_password(password)
         try:
-            cursor.execute("INSERT INTO usuario (username, password) VALUES (%s, %s)", (username, hashed_password))
+            cursor.execute("INSERT INTO usuario (username, password, company) VALUES (%s, %s, %s)", (username, hashed_password), company)
             conn.commit()
             st.success("El registro ha sido exitoso")
         except psycopg2.Error as e:
@@ -96,13 +96,14 @@ def register_or_login_view():
     """, unsafe_allow_html=True)
     
     usuario = st.text_input("Usuario", key="usuario_input")
+    empresa = st.text_input("Organización a la que pertenece:", key="empresa_input")
     contrasena = st.text_input("Contraseña", type="password", key="contrasena_input")
     
     col1, col2 = st.columns(2)
     with col1:
         if st.button("Registrarse"):
-            if usuario and contrasena:
-                register_user(usuario, contrasena)
+            if usuario and contrasena and empresa:
+                register_user(usuario, contrasena, empresa)
             else:
                 st.error("Por favor complete todos los campos")
     
