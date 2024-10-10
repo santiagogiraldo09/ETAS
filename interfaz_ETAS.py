@@ -187,7 +187,7 @@ def main_view():
         missing_fields_messages = []
         
         # Verificar si el correo está completo
-        if not correo.strip():
+        if not correo:
             all_fields = False
             missing_fields_messages.append("El campo 'Correo de notificación' es obligatorio.")
         
