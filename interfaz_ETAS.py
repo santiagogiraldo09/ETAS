@@ -156,6 +156,8 @@ def main_view():
     # Inicializar el contador de entradas si no existe
     if 'container_entries' not in st.session_state:
         st.session_state.container_entries = 1
+    if 'last_container_entries' not in st.session_state:
+        st.session_state.last_container_entries = st.session_state.container_entries
 
     # Crear un formulario dinámico
     for i in range(st.session_state.container_entries):
@@ -170,16 +172,23 @@ def main_view():
         with col3:
             st.selectbox("**Naviera**",["Evergreen","CMA-CGM","Maersk","ONE","Hapag-Lloyd", "Otra"], key=f"shipping_company_{i}")
     
-        
+    # Verificar si se debe actualizar la vista
+    if st.session_state.container_entries != st.session_state.last_container_entries:
+        st.experimental_rerun()    
+    
     col_add, col_delete = st.columns(2)
     with col_add:
         # Botón para agregar otra entrada
         if st.button("Agregar otra entrada"):
             st.session_state.container_entries += 1
-    if st.session_state.container_entries > 1:
-        with col_delete:
-            if st.button("Eliminar entrada")and st.session_state.container_entries > 1:
-                st.session_state.container_entries -= 1
+    #if st.session_state.container_entries > 1:
+    with col_delete:
+        if st.session_state.container_entries > 1 and st.button("Eliminar entrada"):
+            st.session_state.container_entries -= 1
+    
+    # Actualizar el valor de `last_container_entries` para la siguiente iteración
+    st.session_state.last_container_entries = st.session_state.container_entries
+    
     # Botón para enviar los datos ingresados
     if st.button("Enviar", key="send_button"):
         #Inicializar bandera para verificar que todos los campos estén completos
