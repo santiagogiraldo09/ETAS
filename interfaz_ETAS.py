@@ -182,19 +182,17 @@ def main_view():
             #st.session_state.container_entries -= 1
     
     # Crear un formulario dinámico
-    for i in range(st.session_state.container_entries):
+    for i, entry in enumerate(entries):
         st.subheader(f"Entrada {i + 1}")
         
         # Crear tres columnas para alinear los campos horizontalmente
         col1, col2, col3 = st.columns(3)
         with col1:
-            st.text_input(f"**Número de contenedor**", key=f"container_number_{i}")
+            entry["num_contenedor"] = st.text_input(f"Número de contenedor {i + 1}", value=entry["num_contenedor"], key=f"container_number_{i}")
         with col2:
-            st.text_input(f"**Documento de transporte**", key=f"transport_document_{i}")
+            entry["doc_transporte"] = st.text_input(f"Documento de transporte {i + 1}", value=entry["doc_transporte"], key=f"transport_document_{i}")
         with col3:
-            st.selectbox("**Naviera**",["Evergreen","CMA-CGM","Maersk","ONE","Hapag-Lloyd", "Otra"], key=f"shipping_company_{i}")
-    
-        
+            entry["naviera"] = st.selectbox(f"Naviera {i + 1}", ["Evergreen", "CMA-CGM", "Maersk", "ONE", "Hapag-Lloyd", "Otra"], index=0, key=f"shipping_company_{i}")        
    
     # Botón para enviar los datos ingresados
     if st.button("Enviar", key="send_button"):
@@ -202,40 +200,24 @@ def main_view():
         all_fields = True
         missing_fields_messages = []
         
-        # Verificar si el correo está completo
-        if not correo:
-            all_fields = False
-            missing_fields_messages.append("El campo 'Correo de notificación' es obligatorio.")
-        
-        container_data = []
-        for i in range(st.session_state.container_entries):
-            num_contenedor = st.session_state[f"container_number_{i}"].strip()
-            doc_transporte = st.session_state.get(f"transport_document_{i}", "").strip()
-            naviera = st.session_state[f"shipping_company_{i}"]
-            
-            # Validar campos
-            if not num_contenedor:
+        for i, data in enumerate(entries):
+            if not data["num_contenedor"]:
                 all_fields = False
                 missing_fields_messages.append(f"El campo 'Número de contenedor' en la entrada {i+1} es obligatorio.")
-            if not doc_transporte:
+            if not data["doc_transporte"]:
                 all_fields = False
                 missing_fields_messages.append(f"El campo 'Documento de transporte' en la entrada {i+1} es obligatorio.")
-            if not naviera:
+            if not data["naviera"]:
                 all_fields = False
                 missing_fields_messages.append(f"El campo 'Naviera' en la entrada {i+1} es obligatorio.")
-            
-            container_data.append({
-                "num_contenedor": num_contenedor,
-                "doc_transporte": doc_transporte,
-                "naviera": naviera
-            })
+                
         if all_fields:
             # Obtener el user_id del estado de sesión y enviar los datos a la base de datos
             user_id = st.session_state.get('id')
             if user_id:
-                add_container_data(user_id, container_data, correo)
+                add_container_data(user_id, entries, correo)
                 # Enviar el correo y el primer número de contenedor a Power Automate
-                send_to_power_automate(correo, container_data[0]["num_contenedor"])
+                send_to_power_automate(correo, entries[0]["num_contenedor"])
             else:
                 st.error("No se ha encontrado el id del usuario. Por favor, inicie sesión nuevamente.")
         else:
