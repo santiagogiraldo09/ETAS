@@ -24,11 +24,11 @@ def get_db_connection():
         return None
 
 # Inicializar lista de entradas
-entries = [{"num_contenedor": "", "doc_transporte": "", "naviera": ""}]
+entries = [{"num_contenedor": "", "naviera": ""}]
 
 # Función para agregar una nueva entrada
 def add_entry():
-    entries.append({"num_contenedor": "", "doc_transporte": "", "naviera": ""})
+    entries.append({"num_contenedor": "", "naviera": ""})
 
 # Función para eliminar la última entrada
 def remove_entry():
@@ -75,8 +75,8 @@ def add_container_data(user_id, container_data, correo):
     if conn:
         cursor = conn.cursor()
         insert_query = """
-        INSERT INTO consulta (num_contenedor, doc_transporte, naviera, usuario_id)
-        VALUES (%s, %s, %s, %s)
+        INSERT INTO consulta (num_contenedor, naviera, usuario_id)
+        VALUES (%s, %s, %s)
         """
         
         #Consulta para actualizar el correo en la tabla 'usuario'
@@ -90,7 +90,7 @@ def add_container_data(user_id, container_data, correo):
                 st.session_state['email'] = correo  # Actualiza el estado con el nuevo correo
             
             for data in container_data:
-                cursor.execute(insert_query, (data["num_contenedor"], data["doc_transporte"], data["naviera"], user_id))
+                cursor.execute(insert_query, (data["num_contenedor"], data["naviera"], user_id))
             conn.commit()
             st.success("Información cargada, pronto recibirá un email dando inicio al proceso de consulta de ETAS.")
         except psycopg2.Error as e:
@@ -206,23 +206,23 @@ def main_view():
         container_data = []
         for i in range(st.session_state.container_entries):
             num_contenedor = st.session_state[f"container_number_{i}"].strip()
-            doc_transporte = st.session_state.get(f"transport_document_{i}", "").strip()
+            #doc_transporte = st.session_state.get(f"transport_document_{i}", "").strip()
             naviera = st.session_state[f"shipping_company_{i}"]
             
             # Validar campos
             if not num_contenedor:
                 all_fields = False
                 missing_fields_messages.append(f"El campo 'Número de contenedor' en la entrada {i+1} es obligatorio.")
-            if not doc_transporte:
-                all_fields = False
-                missing_fields_messages.append(f"El campo 'Documento de transporte' en la entrada {i+1} es obligatorio.")
+            #if not doc_transporte:
+                #all_fields = False
+                #missing_fields_messages.append(f"El campo 'Documento de transporte' en la entrada {i+1} es obligatorio.")
             if not naviera:
                 all_fields = False
                 missing_fields_messages.append(f"El campo 'Naviera' en la entrada {i+1} es obligatorio.")
             
             container_data.append({
                 "num_contenedor": num_contenedor,
-                "doc_transporte": doc_transporte,
+                #doc_transporte": doc_transporte,
                 "naviera": naviera
             })
         if all_fields:
