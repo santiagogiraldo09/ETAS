@@ -173,13 +173,13 @@ def main_view():
     for i in range(st.session_state.container_entries):
         st.subheader(f"Entrada {i + 1}")
         
-        # Crear tres columnas para alinear los campos horizontalmente
-        col1, col2, col3 = st.columns(3)
+        # Crear dos columnas para alinear los campos horizontalmente
+        col1, col2 = st.columns(2)
         with col1:
             st.text_input(f"**Número de contenedor**", key=f"container_number_{i}")
+        #with col2:
+            #st.text_input(f"**Documento de transporte**", key=f"transport_document_{i}")
         with col2:
-            st.text_input(f"**Documento de transporte**", key=f"transport_document_{i}")
-        with col3:
             st.selectbox("**Naviera**",["Evergreen","CMA-CGM","Maersk","ONE","Hapag-Lloyd", "Otra"], key=f"shipping_company_{i}")
     
         
