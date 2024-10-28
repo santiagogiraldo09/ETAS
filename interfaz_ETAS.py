@@ -183,15 +183,15 @@ def main_view():
             st.selectbox("**Naviera**",["Evergreen","CMA-CGM","Maersk","ONE","Hapag-Lloyd", "Otra"], key=f"shipping_company_{i}")
     
         
-    col_add, col_delete = st.columns(2)
-    with col_add:
+    #col_add, col_delete = st.columns(2)
+    #with col_add:
         # Botón para agregar otra entrada
-        if st.button("Agregar otra entrada"):
-            st.session_state.container_entries += 1
-    if st.session_state.container_entries > 1:
-        with col_delete:
-            if st.button("Eliminar entrada")and st.session_state.container_entries > 1:
-                st.session_state.container_entries -= 1
+        #if st.button("Agregar otra entrada"):
+            #st.session_state.container_entries += 1
+    #if st.session_state.container_entries > 1:
+        #with col_delete:
+            #if st.button("Eliminar entrada")and st.session_state.container_entries > 1:
+                #st.session_state.container_entries -= 1
     # Botón para enviar los datos ingresados
     if st.button("Enviar", key="send_button"):
         #Inicializar bandera para verificar que todos los campos estén completos
