@@ -118,7 +118,7 @@ def register_or_login_view():
         
         if st.button("Registrarse"):
             if usuario and contrasena and empresa and nombre_completo and correo and num_celular :
-                register_user(usuario, contrasena, empresa)
+                register_user(usuario, contrasena, empresa, nombre_completo, num_celular, correo)
             else:
                 st.error("Por favor complete todos los campos")
                 
