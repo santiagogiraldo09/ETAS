@@ -103,7 +103,6 @@ def add_container_data(user_id, container_data, correo):
 def register_or_login_view():
     st.markdown("""
     <h1 style='text-align: center;'>Alerta de ETAs</h1>
-    <h3 style='text-align: left;'>Registro o Login</h3>
     """, unsafe_allow_html=True)
 
     # Radio buttons para seleccionar Registro o Login
