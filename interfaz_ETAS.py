@@ -120,22 +120,22 @@ def register_or_login_view():
             else:
                 st.error("Por favor complete todos los campos")
                 
-        elif option == "Login":
-            usuario = st.text_input("Usuario", key="usuario_login")
-            contrasena = st.text_input("Contraseña", type="password", key="contrasena_login")
-            
-            if st.button("Entrar"):
-                if usuario and contrasena:
-                    user_id, email = login_user(usuario, contrasena)
-                    if user_id:
-                        st.session_state['current_view'] = 'main'
-                        st.session_state['id'] = user_id
-                        st.session_state['email'] = email
-                        st.success("Inicio de sesión exitoso")
-                    else:
-                        st.error("Usuario o contraseña incorrectos")
+    elif option == "Login":
+        usuario = st.text_input("Usuario", key="usuario_login")
+        contrasena = st.text_input("Contraseña", type="password", key="contrasena_login")
+        
+        if st.button("Entrar"):
+            if usuario and contrasena:
+                user_id, email = login_user(usuario, contrasena)
+                if user_id:
+                    st.session_state['current_view'] = 'main'
+                    st.session_state['id'] = user_id
+                    st.session_state['email'] = email
+                    st.success("Inicio de sesión exitoso")
                 else:
-                    st.error("Por favor complete todos los campos")
+                    st.error("Usuario o contraseña incorrectos")
+            else:
+                st.error("Por favor complete todos los campos")
 
 
 # Vista de registro e inicio de sesión
