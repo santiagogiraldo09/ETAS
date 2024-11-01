@@ -109,6 +109,9 @@ def register_or_login_view():
     option = st.radio("Seleccione una opción:", ("Registro", "Login"))
     
     if option == "Registro":
+        nombre_completo = st.text_input("Nombre Completo", key="nombre_input")
+        correo = st.text_input("Correo electrónico", key="correo_input")
+        num_celular = st.text_input("Número de celular", key="celular_input")
         usuario = st.text_input("Usuario", key="usuario_registro")
         empresa = st.text_input("Organización a la que pertenece", key="empresa_registro")
         contrasena = st.text_input("Contraseña", type="password", key="contrasena_registro")
