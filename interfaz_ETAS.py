@@ -120,7 +120,7 @@ def register_or_login_view():
             else:
                 st.error("Por favor complete todos los campos")
                 
-        else: #option == "Login":
+        elif option == "Login":
             usuario = st.text_input("Usuario", key="usuario_login")
             contrasena = st.text_input("Contraseña", type="password", key="contrasena_login")
             
