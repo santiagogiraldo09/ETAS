@@ -99,39 +99,80 @@ def add_container_data(user_id, container_data, correo):
             cursor.close()
             conn.close()
 
-
 # Vista de registro e inicio de sesión
 def register_or_login_view():
     st.markdown("""
     <h1 style='text-align: center;'>Alerta de ETAs</h1>
     <h3 style='text-align: left;'>Registro o Login</h3>
     """, unsafe_allow_html=True)
+
+    # Radio buttons para seleccionar Registro o Login
+    option = st.radio("Seleccione una opción:", ("Registro", "Login"))
     
-    usuario = st.text_input("Usuario", key="usuario_input")
-    empresa = st.text_input("Organización a la que pertenece: **(solo necesario en el registro)**", key="empresa_input")
-    contrasena = st.text_input("Contraseña", type="password", key="contrasena_input")
-    
-    col1, col2 = st.columns(2)
-    with col1:
+    if option == "Registro":
+        usuario = st.text_input("Usuario", key="usuario_registro")
+        empresa = st.text_input("Organización a la que pertenece", key="empresa_registro")
+        contrasena = st.text_input("Contraseña", type="password", key="contrasena_registro")
+        
         if st.button("Registrarse"):
             if usuario and contrasena and empresa:
                 register_user(usuario, contrasena, empresa)
             else:
                 st.error("Por favor complete todos los campos")
-    
-    with col2:
-        if st.button("Entrar"):
-            if usuario and contrasena:
-                user_id, email = login_user(usuario, contrasena)
-                if user_id:
-                    st.session_state['current_view'] = 'main'
-                    st.session_state['id'] = user_id
-                    st.session_state['email'] = email
-                    st.success("Inicio de sesión exitoso")
+                
+        else: #option == "Login":
+            usuario = st.text_input("Usuario", key="usuario_login")
+            contrasena = st.text_input("Contraseña", type="password", key="contrasena_login")
+            
+            if st.button("Entrar"):
+                if usuario and contrasena:
+                    user_id, email = login_user(usuario, contrasena)
+                    if user_id:
+                        st.session_state['current_view'] = 'main'
+                        st.session_state['id'] = user_id
+                        st.session_state['email'] = email
+                        st.success("Inicio de sesión exitoso")
+                    else:
+                        st.error("Usuario o contraseña incorrectos")
                 else:
-                    st.error("Usuario o contraseña incorrectos")
-            else:
-                st.error("Por favor complete todos los campos")
+                    st.error("Por favor complete todos los campos")
+
+
+# Vista de registro e inicio de sesión
+#def register_or_login_view():
+    #st.markdown("""
+    #<h1 style='text-align: center;'>Alerta de ETAs</h1>
+    #<h3 style='text-align: left;'>Registro o Login</h3>
+    #""", unsafe_allow_html=True)
+    
+    #nombre_completo = st.text_input("Nombre Completo", key="nombre_input")
+    #correo = st.text_input("Correo electrónico", key="correo_input")
+    #num_celular = st.text_input("Número de celular", key="celular_input")
+    #usuario = st.text_input("Usuario", key="usuario_input")
+    #empresa = st.text_input("Organización a la que pertenece: **(solo necesario en el registro)**", key="empresa_input")
+    #contrasena = st.text_input("Contraseña", type="password", key="contrasena_input")
+    
+    #col1, col2 = st.columns(2)
+    #with col1:
+        #if st.button("Registrarse"):
+            #if usuario and contrasena and empresa:
+                #register_user(usuario, contrasena, empresa)
+            #else:
+                #st.error("Por favor complete todos los campos")
+    
+    #with col2:
+        #if st.button("Entrar"):
+            #if usuario and contrasena:
+                #user_id, email = login_user(usuario, contrasena)
+                #if user_id:
+                    #st.session_state['current_view'] = 'main'
+                    #st.session_state['id'] = user_id
+                    #st.session_state['email'] = email
+                    #st.success("Inicio de sesión exitoso")
+                #else:
+                    #st.error("Usuario o contraseña incorrectos")
+            #else:
+                #st.error("Por favor complete todos los campos")
 
 #Enviar datos al flujo de Power Automate Nube
 def send_to_power_automate(correo, num_contenedor):
