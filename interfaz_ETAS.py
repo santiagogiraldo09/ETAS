@@ -290,7 +290,7 @@ def reset_user_password(token, new_password):
         st.error("No se pudo conectar a la base de datos")
         
 def send_reset_email_via_power_automate(email, reset_link):
-    url_flujo = 'TU_URL_DE_POWER_AUTOMATE_PARA_RESTABLECIMIENTO'
+    url_flujo = 'https://prod-46.westus.logic.azure.com:443/workflows/2c790776e8dc4d4da8b989951118c351/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=kN1PXGi0pFFHgrI7lls5DNNstlBg8YtEApIBkrlwYkE'
     headers = {'Content-Type': 'application/json'}
     data = {
         "correo": email,
