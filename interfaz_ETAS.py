@@ -131,23 +131,25 @@ def register_or_login_view():
         usuario = st.text_input("Usuario", key="usuario_login")
         contrasena = st.text_input("Contraseña", type="password", key="contrasena_login")
         
-        if st.button("Entrar"):
-            if usuario and contrasena:
-                user_id, email = login_user(usuario, contrasena)
-                if user_id:
-                    st.session_state['current_view'] = 'main'
-                    st.session_state['id'] = user_id
-                    st.session_state['email'] = email
-                    #st.success("Inicio de sesión exitoso")
-                    #st.rerun()
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("Entrar"):
+                if usuario and contrasena:
+                    user_id, email = login_user(usuario, contrasena)
+                    if user_id:
+                        st.session_state['current_view'] = 'main'
+                        st.session_state['id'] = user_id
+                        st.session_state['email'] = email
+                        #st.success("Inicio de sesión exitoso")
+                        #st.rerun()
+                    else:
+                        st.error("Usuario o contraseña incorrectos")
                 else:
-                    st.error("Usuario o contraseña incorrectos")
-            else:
-                st.error("Por favor complete todos los campos")
-        
-        if st.button("¿Olvidaste tu contraseña?"):
-            st.session_state['current_view'] = 'forgot_password'
-            st.rerun()
+                    st.error("Por favor complete todos los campos")
+        with col2:
+            if st.button("¿Olvidaste tu contraseña?"):
+                st.session_state['current_view'] = 'forgot_password'
+                st.rerun()
 
 def send_password_reset_email(email):
     conn = get_db_connection()
