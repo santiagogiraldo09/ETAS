@@ -146,10 +146,10 @@ def register_or_login_view():
                         st.error("Usuario o contraseña incorrectos")
                 else:
                     st.error("Por favor complete todos los campos")
-        #with col2:
-            #if st.button("¿Olvidaste tu contraseña?"):
-                #st.session_state['current_view'] = 'forgot_password'
-                #st.rerun()
+        with col2:
+            if st.button("¿Olvidaste tu contraseña?"):
+                st.session_state['current_view'] = 'forgot_password'
+                st.rerun()
 
 def send_password_reset_email(email):
     conn = get_db_connection()
