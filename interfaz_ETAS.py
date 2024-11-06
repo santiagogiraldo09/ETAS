@@ -155,7 +155,7 @@ def send_password_reset_email(email):
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT id FROM usuario WHERE email_registro = %s", (email,))
+        cursor.execute("SELECT id FROM usuario WHERE email = %s", (email,))
         result = cursor.fetchone()
         if result:
             user_id = result[0]
