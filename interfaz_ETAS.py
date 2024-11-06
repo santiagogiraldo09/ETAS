@@ -141,7 +141,7 @@ def register_or_login_view():
                         st.session_state['id'] = user_id
                         st.session_state['email'] = email
                         #st.success("Inicio de sesión exitoso")
-                        #st.rerun()
+                        st.rerun()
                     else:
                         st.error("Usuario o contraseña incorrectos")
                 else:
