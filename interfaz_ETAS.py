@@ -3,10 +3,15 @@ import pandas as pd
 import requests
 import psycopg2
 import hashlib
+import secrets
+import datetime
 
 # Limpiar la caché al inicio
 st.cache_data.clear()
 st.cache_resource.clear()
+
+def generate_reset_token():
+    return secrets.token_urlsafe(32)
 
 # Conexión a la base de datos
 def get_db_connection():
@@ -133,13 +138,53 @@ def register_or_login_view():
                     st.session_state['current_view'] = 'main'
                     st.session_state['id'] = user_id
                     st.session_state['email'] = email
-                    st.success("Inicio de sesión exitoso")
-                    st.rerun()
+                    #st.success("Inicio de sesión exitoso")
+                    #st.rerun()
                 else:
                     st.error("Usuario o contraseña incorrectos")
             else:
                 st.error("Por favor complete todos los campos")
+        
+        if st.button("¿Olvidaste tu contraseña?"):
+            st.session_state['current_view'] = 'forgot_password'
+            st.rerun()
 
+def send_password_reset_email(email):
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT id FROM usuario WHERE email_registro = %s", (email,))
+        result = cursor.fetchone()
+        if result:
+            user_id = result[0]
+            token = generate_reset_token()
+            expiration = datetime.datetime.now() + datetime.timedelta(hours=1)  # Token válido por 1 hora
+            cursor.execute("""
+                UPDATE usuario SET reset_token = %s, token_expiration = %s WHERE id = %s
+            """, (token, expiration, user_id))
+            conn.commit()
+            cursor.close()
+            conn.close()
+            # Construye el enlace de restablecimiento
+            reset_link = f"{st.secrets['app_url']}?token={token}"
+            # Envía el correo electrónico
+            send_reset_email_via_power_automate(email, reset_link)
+            st.success("Se ha enviado un enlace de recuperación a su correo electrónico")
+        else:
+            st.error("El correo electrónico no está registrado")
+    else:
+        st.error("No se pudo conectar a la base de datos")
+
+def forgot_password_view():
+    st.title("Recuperar contraseña")
+    email = st.text_input("Ingrese su correo electrónico registrado")
+
+    if st.button("Enviar enlace de recuperación"):
+        if email:
+            # Aquí llamas a la función para generar y enviar el token de recuperación
+            send_password_reset_email(email)
+        else:
+            st.error("Por favor ingrese su correo electrónico")
 
 # Vista de registro e inicio de sesión
 #def register_or_login_view():
@@ -194,8 +239,67 @@ def send_to_power_automate(correo, num_contenedor):
         #st.error(f"Error al enviar los datos a Power Automate: {response.status_code}")
         print(f"Error al enviar los datos a Power Automate: {response.status_code}")
 
+def reset_password_view():
+    st.title("Restablecer contraseña")
+    new_password = st.text_input("Nueva contraseña", type="password")
+    confirm_password = st.text_input("Confirmar nueva contraseña", type="password")
+
+    if st.button("Restablecer contraseña"):
+        if new_password and confirm_password:
+            if new_password == confirm_password:
+                reset_token = st.session_state.get('reset_token')
+                if reset_token:
+                    reset_user_password(reset_token, new_password)
+                else:
+                    st.error("Token inválido o expirado")
+            else:
+                st.error("Las contraseñas no coinciden")
+        else:
+            st.error("Por favor complete todos los campos")
 
 
+def reset_user_password(token, new_password):
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT id, token_expiration FROM usuario WHERE reset_token = %s
+        """, (token,))
+        result = cursor.fetchone()
+        if result:
+            user_id, token_expiration = result
+            if datetime.datetime.now() <= token_expiration:
+                hashed_password = hash_password(new_password)
+                cursor.execute("""
+                    UPDATE usuario SET password = %s, reset_token = NULL, token_expiration = NULL WHERE id = %s
+                """, (hashed_password, user_id))
+                conn.commit()
+                st.success("Su contraseña ha sido restablecida con éxito")
+                # Redirige al inicio de sesión
+                st.session_state['current_view'] = 'login'
+                st.rerun()
+            else:
+                st.error("El token ha expirado")
+        else:
+            st.error("Token inválido")
+        cursor.close()
+        conn.close()
+    else:
+        st.error("No se pudo conectar a la base de datos")
+        
+def send_reset_email_via_power_automate(email, reset_link):
+    url_flujo = 'TU_URL_DE_POWER_AUTOMATE_PARA_RESTABLECIMIENTO'
+    headers = {'Content-Type': 'application/json'}
+    data = {
+        "correo": email,
+        "reset_link": reset_link
+    }
+    response = requests.post(url_flujo, headers=headers, json=data)
+    if response.status_code in (200, 202):
+        print("Correo de restablecimiento enviado correctamente.")
+    else:
+        print(f"Error al enviar el correo de restablecimiento: {response.status_code}")        
+        
 # Vista principal de la aplicación después de iniciar sesión
 def main_view():
     #url_flujo = 'https://prod-43.westus.logic.azure.com:443/workflows/92297bf73c4b494ea9c4668c7a9569fe/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=aoHBBza4EuOoUsRdxDJFM_0N6Gf-jLR4tWCx3etWLP8'
@@ -296,6 +400,16 @@ def ejecucion_flujo_url(url):
 
 # Control de flujo entre vistas
 def main():
+    # Verificar si hay un token de restablecimiento en los parámetros de la URL
+    query_params = st.experimental_get_query_params()
+    if 'token' in query_params:
+        token = query_params['token'][0]
+        st.session_state['reset_token'] = token
+        st.session_state['current_view'] = 'reset_password'
+        # Limpiar los parámetros de la URL para evitar bucles infinitos
+        st.experimental_set_query_params()
+        st.rerun()
+        
     if 'current_view' not in st.session_state:
         st.session_state['current_view'] = 'login'
 
@@ -303,6 +417,10 @@ def main():
         register_or_login_view()
     elif st.session_state['current_view'] == 'main':
         main_view()
+    elif st.session_state['current_view'] == 'forgot_password':
+        forgot_password_view()
+    elif st.session_state['current_view'] == 'reset_password':
+        reset_password_view()
 
 if __name__ == "__main__":
     main()
