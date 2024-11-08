@@ -104,6 +104,49 @@ def add_container_data(user_id, container_data, correo):
             cursor.close()
             conn.close()
 
+def history_view():
+    st.tittle("Historil de Registro de Contenedores")
+    
+    user_id = st.session_state.get('id')
+    if not user_id:
+        st.error("No se ha enocntrado el id del usuario. Por favor inicie sesión nuevamente.")
+        return
+    
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        try:
+            # Consulta SQL para obtener los registros del usuario
+            query = """
+            SELECT c.num_contenedor, c.naviera, r.eta
+            FROM consulta c
+            LEFT JOIN resultado r ON c.id = r.id_consulta
+            WHERE c.usuario_id = %s
+            ORDER BY c.id DESC
+            """
+            cursor.execute(query, (user_id,))
+            records = cursor.fetchall()
+            
+            if records:
+                # Crear un DataFrame para mostrar los datos
+                df = pd.DataFrame(records, columns=['Número de Contenedor', 'Naviera', 'ETA'])
+                df['ETA'] = df['ETA'].fillna('No disponible')
+                st.dataframe(df)
+            else:
+                st.info("No se han encontrado registros.")
+        except psycopg2.Error as e:
+            st.error(f"Error al obtener los registros: {e}")
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        st.error("No se pudo conectar a la base de datos.")
+
+    # Botón para regresar a la vista principal
+    if st.button("Volver"):
+        st.session_state['current_view'] = 'main'
+        st.rerun()
+        
 # Vista de registro e inicio de sesión
 def register_or_login_view():
     st.markdown("""
@@ -342,50 +385,56 @@ def main_view():
         #with col_delete:
             #if st.button("Eliminar entrada")and st.session_state.container_entries > 1:
                 #st.session_state.container_entries -= 1
-    # Botón para enviar los datos ingresados
-    if st.button("Enviar", key="send_button"):
-        #Inicializar bandera para verificar que todos los campos estén completos
-        all_fields = True
-        missing_fields_messages = []
-        
-        # Verificar si el correo está completo
-        if not correo:
-            all_fields = False
-            missing_fields_messages.append("El campo 'Correo de notificación' es obligatorio.")
-        
-        container_data = []
-        for i in range(st.session_state.container_entries):
-            num_contenedor = st.session_state[f"container_number_{i}"].strip()
-            #doc_transporte = st.session_state.get(f"transport_document_{i}", "").strip()
-            naviera = st.session_state[f"shipping_company_{i}"]
+    col1, col2 = st.columns(2)
+    with col1:
+        # Botón para enviar los datos ingresados
+        if st.button("Enviar", key="send_button"):
+            #Inicializar bandera para verificar que todos los campos estén completos
+            all_fields = True
+            missing_fields_messages = []
             
-            # Validar campos
-            if not num_contenedor:
+            # Verificar si el correo está completo
+            if not correo:
                 all_fields = False
-                missing_fields_messages.append(f"El campo 'Número de contenedor' en la entrada {i+1} es obligatorio.")
-            #if not doc_transporte:
-                #all_fields = False
-                #missing_fields_messages.append(f"El campo 'Documento de transporte' en la entrada {i+1} es obligatorio.")
-            if not naviera:
-                all_fields = False
-                missing_fields_messages.append(f"El campo 'Naviera' en la entrada {i+1} es obligatorio.")
+                missing_fields_messages.append("El campo 'Correo de notificación' es obligatorio.")
             
-            container_data.append({
-                "num_contenedor": num_contenedor,
-                #doc_transporte": doc_transporte,
-                "naviera": naviera
-            })
-        if all_fields:
-            # Obtener el user_id del estado de sesión y enviar los datos a la base de datos
-            user_id = st.session_state.get('id')
-            if user_id:
-                add_container_data(user_id, container_data, correo)
-                # Enviar el correo y el primer número de contenedor a Power Automate
-                send_to_power_automate(correo, container_data[0]["num_contenedor"])
+            container_data = []
+            for i in range(st.session_state.container_entries):
+                num_contenedor = st.session_state[f"container_number_{i}"].strip()
+                #doc_transporte = st.session_state.get(f"transport_document_{i}", "").strip()
+                naviera = st.session_state[f"shipping_company_{i}"]
+                
+                # Validar campos
+                if not num_contenedor:
+                    all_fields = False
+                    missing_fields_messages.append(f"El campo 'Número de contenedor' en la entrada {i+1} es obligatorio.")
+                #if not doc_transporte:
+                    #all_fields = False
+                    #missing_fields_messages.append(f"El campo 'Documento de transporte' en la entrada {i+1} es obligatorio.")
+                if not naviera:
+                    all_fields = False
+                    missing_fields_messages.append(f"El campo 'Naviera' en la entrada {i+1} es obligatorio.")
+                
+                container_data.append({
+                    "num_contenedor": num_contenedor,
+                    #doc_transporte": doc_transporte,
+                    "naviera": naviera
+                })
+            if all_fields:
+                # Obtener el user_id del estado de sesión y enviar los datos a la base de datos
+                user_id = st.session_state.get('id')
+                if user_id:
+                    add_container_data(user_id, container_data, correo)
+                    # Enviar el correo y el primer número de contenedor a Power Automate
+                    send_to_power_automate(correo, container_data[0]["num_contenedor"])
+                else:
+                    st.error("No se ha encontrado el id del usuario. Por favor, inicie sesión nuevamente.")
             else:
-                st.error("No se ha encontrado el id del usuario. Por favor, inicie sesión nuevamente.")
-        else:
-            st.error ("Hay campos sin completar")
+                st.error ("Hay campos sin completar")
+    with col2:
+        if st.button("Historial de Registro"):
+            st.session_state['current_view'] = 'history'
+            st.rerun()
 
 # Función para ejecutar un flujo a través de una URL
 def ejecucion_flujo_url(url):
@@ -423,6 +472,8 @@ def main():
         forgot_password_view()
     elif st.session_state['current_view'] == 'reset_password':
         reset_password_view()
+    elif st.session_state['current_view'] == 'history':
+        history_view()
 
 if __name__ == "__main__":
     main()
