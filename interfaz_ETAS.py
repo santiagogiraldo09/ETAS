@@ -105,7 +105,7 @@ def add_container_data(user_id, container_data, correo):
             conn.close()
 
 def history_view():
-    st.tittle("Historil de Registro de Contenedores")
+    st.title("Historial de Registro de Contenedores")
     
     user_id = st.session_state.get('id')
     if not user_id:
