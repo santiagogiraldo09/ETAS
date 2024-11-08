@@ -139,11 +139,11 @@ def history_view():
                     col1, col2, col3 = st.columns(3)
     
                     with col1:
-                        st.metric(label="Número de Contenedor", value=num_contenedor)
+                        st.text_area(label="Número de Contenedor", value=num_contenedor)
                     with col2:
-                        st.metric(label="Naviera", value=naviera)
+                        st.text_area(label="Naviera", value=naviera)
                     with col3:
-                        st.metric(label="ETA", value=eta)
+                        st.text_area(label="ETA", value=eta)
     
                     st.markdown("---")  # Línea de separación entre registros
                 
