@@ -233,7 +233,7 @@ def forgot_password_view():
             
     # Botón para regresar a la vista principal
     if st.button("Volver"):
-        st.session_state['current_view'] = 'main'
+        st.session_state['current_view'] = 'login'
         st.rerun()
 
 # Vista de registro e inicio de sesión
