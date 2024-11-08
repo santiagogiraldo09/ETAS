@@ -143,7 +143,7 @@ def history_view():
                     with col2:
                         st.text_input("Naviera", value=naviera, key=f'naviera_{idx}', disabled=True)
                     with col3:
-                        st.text_input("ETA", value=eta, key=f'eta_{idx}', disabled=True)
+                        st.text_input("ETA", value=eta, key=f'eta_{idx}', disabled=False)
     
                     st.markdown("---")  # Línea de separación entre registros
                 
