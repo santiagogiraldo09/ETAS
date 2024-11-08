@@ -230,6 +230,11 @@ def forgot_password_view():
             send_password_reset_email(email)
         else:
             st.error("Por favor ingrese su correo electrónico")
+            
+    # Botón para regresar a la vista principal
+    if st.button("Volver"):
+        st.session_state['current_view'] = 'main'
+        st.rerun()
 
 # Vista de registro e inicio de sesión
 #def register_or_login_view():
@@ -431,10 +436,10 @@ def main_view():
                     st.error("No se ha encontrado el id del usuario. Por favor, inicie sesión nuevamente.")
             else:
                 st.error ("Hay campos sin completar")
-    with col2:
-        if st.button("Historial de Registro"):
-            st.session_state['current_view'] = 'history'
-            st.rerun()
+    #with col2:
+        #if st.button("Historial de Registro"):
+            #st.session_state['current_view'] = 'history'
+            #st.rerun()
 
 # Función para ejecutar un flujo a través de una URL
 def ejecucion_flujo_url(url):
