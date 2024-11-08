@@ -128,10 +128,25 @@ def history_view():
             records = cursor.fetchall()
             
             if records:
+                for idx, record in enumerate(records):
+                    num_contenedor, naviera, eta = record
                 # Crear un DataFrame para mostrar los datos
-                df = pd.DataFrame(records, columns=['Número de Contenedor', 'Naviera', 'ETA'])
-                df['ETA'] = df['ETA'].fillna('No disponible')
-                st.dataframe(df)
+                #df = pd.DataFrame(records, columns=['Número de Contenedor', 'Naviera', 'ETA'])
+                #df['ETA'] = df['ETA'].fillna('No disponible')
+                #st.dataframe(df)
+                
+                    # Organizar los campos en columnas
+                    col1, col2, col3 = st.columns(3)
+    
+                    with col1:
+                        st.text_input("Número de Contenedor", value=num_contenedor, key=f'num_contenedor_{idx}', disabled=True)
+                    with col2:
+                        st.text_input("Naviera", value=naviera, key=f'naviera_{idx}', disabled=True)
+                    with col3:
+                        st.text_input("ETA", value=eta, key=f'eta_{idx}', disabled=True)
+    
+                    st.markdown("---")  # Línea de separación entre registros
+                
             else:
                 st.info("No se han encontrado registros.")
         except psycopg2.Error as e:
