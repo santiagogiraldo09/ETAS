@@ -436,10 +436,10 @@ def main_view():
                     st.error("No se ha encontrado el id del usuario. Por favor, inicie sesión nuevamente.")
             else:
                 st.error ("Hay campos sin completar")
-    #with col2:
-        #if st.button("Historial de Registro"):
-            #st.session_state['current_view'] = 'history'
-            #st.rerun()
+    with col2:
+        if st.button("Historial de Registro"):
+            st.session_state['current_view'] = 'history'
+            st.rerun()
 
 # Función para ejecutar un flujo a través de una URL
 def ejecucion_flujo_url(url):
