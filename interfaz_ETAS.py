@@ -21,7 +21,7 @@ def get_db_connection():
             user="postgres",
             password="Daniel2030#",
             host="4.tcp.ngrok.io",
-            port="11333"
+            port="11022"
         )
         return conn
     except psycopg2.Error as e:
