@@ -473,7 +473,7 @@ def ejecucion_flujo_url(url):
 # Control de flujo entre vistas
 def main():
     # Verificar si hay un token de restablecimiento en los parámetros de la URL
-    query_params = st.query_params()
+    query_params = st.experimental_get_query_params()
     if 'token' in query_params:
         token = query_params['token'][0]
         st.session_state['reset_token'] = token
